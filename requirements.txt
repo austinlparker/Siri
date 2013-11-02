@@ -1,0 +1,6 @@
+lxml
+requests
+tweepy
+simplejson
+pygithub3
+fabric

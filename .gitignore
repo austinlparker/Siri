@@ -34,3 +34,18 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# stuff
+*~
+.DS_STORE
+*~
+*#
+.#*
+.rope_project/
+twitter.py
+streams.py
+*.db
+log/
+config*
+config
+persist/
