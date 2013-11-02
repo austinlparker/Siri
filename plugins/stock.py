@@ -1,37 +1,29 @@
-import random
+from util import hook
+import requests
 
-from util import hook, http
 
-
+def yahoo_stocks(symbol):
+    base_url = "http://download.finance.yahoo.com/d/quotes.csv"
+    parameters = {
+        's': symbol,
+        'e': '.csv',
+        'f': 'sncl1'
+    }
+    r = requests.get(base_url, params=parameters)
+    stock_data = r.content.replace('"', '').strip().replace(' - ', ',').split(',')
+    stock_description = ['symbol', 'name', 'change', 'change_percent', 'price']
+    stock = dict(zip(stock_description, stock_data))
+    return stock
+    
+   
 @hook.command
 def stock(inp):
-    '''.stock <symbol> -- gets information about a stock symbol'''
+    symbol = inp.split(' ')[0]
+    stock = yahoo_stocks(symbol)
+    
+    return '{name} ({symbol}) :: ${price} :: {change} ({change_percent})'.format(**stock)
 
-    url = 'http://www.google.com/ig/api?stock=%s'
 
-    parsed = http.get_xml(url, stock=inp)
-
-    if len(parsed) != 1:
-        return "error getting stock info"
-
-    # Stuff the results in a dict for easy string formatting
-    results = dict((el.tag, el.attrib['data'])
-                   for el in parsed.xpath('//finance/*'))
-
-    # if we dont get a company name back, the symbol doesn't match a company
-    if results['company'] == '':
-        return "unknown ticker symbol %s" % inp
-
-    if results['change'][0] == '-':
-        results['color'] = "5"
-    else:
-        results['color'] = "3"
-
-    ret = "%(company)s - %(last)s %(currency)s "                   \
-          "\x03%(color)s%(change)s (%(perc_change)s%%)\x03 "        \
-          "as of %(trade_timestamp)s" % results
-
-    if results['delay'] != '0':
-        ret += " (delayed %s minutes)" % results['delay']
-
-    return ret
+if __name__ == '__main__':
+    y = yahoo_stocks('aapl')
+    print y
