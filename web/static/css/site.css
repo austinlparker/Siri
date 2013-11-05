@@ -1,0 +1,106 @@
+#channel-list {
+  margin-top: 50px;
+}
+
+#channel-list h1 {
+  border-bottom: 1px dotted;
+  margin-bottom: 40px;
+  padding-bottom: 5px;
+}
+
+#channel-list h3 {
+  border-bottom: 1px dashed;
+  padding-bottom: 5px;
+}
+
+#channel-list ul {
+    margin: 0;
+    padding: 0;
+}
+
+.channel {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 15px;
+}
+
+.channel li {
+    display: inline;
+    padding-right: 15px;
+}
+
+.channel h4 {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 3px;
+
+.sublist li {
+    list-style-type: none;
+    display: inline;
+    padding-right: 10px;
+    margin-top: 0px;
+}
+
+.sublist {
+    paddng: 0;
+    margin: 0;
+    margin-left: -25px;
+}
+
+.active {
+    margin-top: 25px;
+}
+
+.item {
+    width: 25%;
+}
+
+#main img {
+    max-width: 250px;
+}
+
+#main {
+  margin: 30px 0;
+  position: relative;
+}
+
+#tiles {
+  list-style-type: none;
+  position: relative; /** Needed to ensure items are laid out relative to this container **/
+  margin: 0;
+  padding: 0;
+}
+
+/**
+ * Grid items
+ */
+#tiles li {
+  width: 200px;
+  background-color: #ffffff;
+  border: 1px solid #dedede;
+          border-radius: 2px;
+     -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  display: none; /** Hide items initially to avoid a flicker effect **/
+  cursor: pointer;
+  padding: 4px;
+}
+
+#tiles li.inactive {
+  visibility: hidden;
+  opacity: 0;
+}
+
+#tiles li img {
+  display: block;
+}
+
+/**
+ * Grid item text
+ */
+#tiles li p {
+  color: #666;
+  font-size: 12px;
+  margin: 7px 0 0 7px;
+}

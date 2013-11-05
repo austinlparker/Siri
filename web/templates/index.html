@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block subtitle %}Home{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div id="channel-list" class="col-md-4 col-md-offset-4">
+    <h1>Siri Stats</h1>
+
+    {% if active %}
+    <ul class="active">
+      <h3>Active Channels</h3>
+      {% for chan in active %}
+      <li class="channel">
+	<h4>#{{ chan }}</h4>
+	<ul class="sublist">
+	  <li><a href="/grid/{{ chan }}">Grid</a></li>
+	  <li><a href="/links/{{ chan }}">Links</a></li>
+	  <li>GIF</li>
+	</ul>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <br />
+    {% endif %}
+
+    <ul>
+      <h3>All Channels</h3>
+      {% for chan in all_chans %}
+      <li class="channel">
+	<h4>#{{ chan }}</h4>
+	<ul class="sublist">
+	  <li><a href="/grid/{{ chan }}">Grid</a></li>
+	  <li><a href="/links/{{ chan }}">Links</a></li>
+	  <li>GIF</li>
+	</ul>
+      </li>
+      {% endfor %}
+    </ul>
+
+  </div>
+</div>
+{% endblock %}

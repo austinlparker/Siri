@@ -4,3 +4,11 @@ tweepy
 simplejson
 pygithub3
 fabric
+redis
+flask
+flask-script
+rethinkdb
+gevent
+micawber
+gunicorn
+Flask-Sockets

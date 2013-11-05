@@ -1,0 +1,71 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>T H E  G R I D</title>
+  <meta name="description" content="An very basic example of how to use the Wookmark jQuery plug-in.">
+  <meta name="author" content="Christoph Ono, Sebastian Helzle">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <link rel="stylesheet" href="/static/grid/css/reset.css">
+  <link rel="stylesheet" href="/static/grid/css/main.css">
+
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+      <h1>Recent Images from #{{ channel }}</h1>
+    </header>
+    <div id="main" role="main">
+
+      {% for url in urls %}
+
+      {% if url.type == "image" %}
+      <ul id="tiles">
+        <li>
+	  <a href="{{ url.url }}"><img src="{{ url.url }}" width="200" style="max-height: 300px"></a>
+	  <p>Posted by {{ url.user }}</p>
+	</li>
+      </ul>
+      {% endif %}
+
+      {% endfor %}
+
+    </div>
+  </div>
+
+  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.wookmark/1.3.1/jquery.wookmark.min.js"></script>
+
+  <script type="text/javascript">
+    (function ($){
+      var handler = $('#tiles li');
+      
+      handler.wookmark({
+          autoResize: true, // This will auto-update the layout when the browser window is resized.
+          container: $('#main'), // Optional, used for some extra CSS styling
+          offset: 5, // Optional, the distance between grid items
+          outerOffset: 10, // Optional, the distance to the containers border
+          itemWidth: 210 // Optional, the width of a grid item
+      });
+
+    })(jQuery);
+
+   var connection = new WebSocket('ws://127.0.0.1:8000/echo');
+   connection.send('ping');
+   connection.onmessage = function(e) {
+     console.log(e);
+   };
+
+  </script>
+
+</body>
+</html>
