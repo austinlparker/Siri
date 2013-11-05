@@ -1,5 +1,7 @@
 from util import hook
 import requests
+import csv
+import StringIO
 
 
 def yahoo_stocks(symbol):
@@ -10,9 +12,15 @@ def yahoo_stocks(symbol):
         'f': 'sncl1'
     }
     r = requests.get(base_url, params=parameters)
-    stock_data = r.content.replace('"', '').strip().replace(' - ', ',').split(',')
-    stock_description = ['symbol', 'name', 'change', 'change_percent', 'price']
-    stock = dict(zip(stock_description, stock_data))
+    stock_csv = [row for row in csv.reader(StringIO.StringIO(r.content), delimiter=',')][0]
+    change, percent = stock_csv[2].split(' - ')
+    stock = {
+        'symbol': stock_csv[0],
+        'name': stock_csv[1],
+        'change': change,
+        'change_percent': percent,
+        'price': stock_csv[3]
+    }
     return stock
     
    
@@ -25,5 +33,5 @@ def stock(inp):
 
 
 if __name__ == '__main__':
-    y = yahoo_stocks('aapl')
+    y = yahoo_stocks('tsla')
     print y
