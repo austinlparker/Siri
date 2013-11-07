@@ -1,37 +1,35 @@
-from util import hook
-import requests
-import csv
-import StringIO
+import random
+
+from util import hook, http
 
 
-def yahoo_stocks(symbol):
-    base_url = "http://download.finance.yahoo.com/d/quotes.csv"
-    parameters = {
-        's': symbol,
-        'e': '.csv',
-        'f': 'sncl1'
-    }
-    r = requests.get(base_url, params=parameters)
-    stock_csv = [row for row in csv.reader(StringIO.StringIO(r.content), delimiter=',')][0]
-    change, percent = stock_csv[2].split(' - ')
-    stock = {
-        'symbol': stock_csv[0],
-        'name': stock_csv[1],
-        'change': change,
-        'change_percent': percent,
-        'price': stock_csv[3]
-    }
-    return stock
-    
-   
 @hook.command
 def stock(inp):
-    symbol = inp.split(' ')[0]
-    stock = yahoo_stocks(symbol)
-    
-    return '{name} ({symbol}) :: ${price} :: {change} ({change_percent})'.format(**stock)
+    '''.stock <symbol> -- gets stock information'''
 
+    url = ('http://query.yahooapis.com/v1/public/yql?format=json&'
+           'env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys')
 
-if __name__ == '__main__':
-    y = yahoo_stocks('tsla')
-    print y
+    parsed = http.get_json(url, q='select * from yahoo.finance.quote '
+                           'where symbol in ("%s")' % inp)  # heh, SQLI
+
+    quote = parsed['query']['results']['quote']
+
+    # if we dont get a company name back, the symbol doesn't match a company
+    if quote['Change'] is None:
+        return "unknown ticker symbol %s" % inp
+
+    if quote['Change'][0] == '-':
+        quote['color'] = "5"
+    else:
+        quote['color'] = "3"
+
+    quote['Percent_Change'] = (100 * float(quote['Change']) /
+                               float(quote['LastTradePriceOnly']))
+
+    ret = "%(Name)s - %(LastTradePriceOnly)s "                   \
+          "\x03%(color)s%(Change)s (%(Percent_Change).2f%%)\x03 "        \
+          "Day Range: %(DaysRange)s " \
+          "MCAP: %(MarketCapitalization)s" % quote
+
+    return ret
