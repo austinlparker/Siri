@@ -1,5 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, make_response
 from flask_sockets import Sockets
+from werkzeug.contrib.atom import AtomFeed
 
 import rethinkdb
 import redis
@@ -37,13 +38,30 @@ def index():
 
 @app.route('/grid/<channel>')
 def channel_images(channel):
-    urls = list(url_db.filter({'channel': channel}).run())
+    urls = list(url_db.filter({'channel': channel}).run())[:50]
     return render_template("grid.html", channel=channel, urls=urls)
 
 
 @app.route('/links/<channel>')
 def channel_urls(channel):
     pass
+
+
+@app.route('/rss/<channel>.atom')
+def rss(channel):
+    urls = list(url_db.filter({'channel': channel}).run())[:50]
+    feed = AtomFeed('Recent URLs', feed_url=request.url, url=request.url_root)
+    for url in urls:
+        feed.add(url['title'], "This URL is a {0}".format(url['type']),
+                 content_type="html",
+                 author=url['user'],
+                 url=url['url'],
+                 updated=url['timestamp'],
+                 published=url['timestamp'])
+    data = feed.get_response()
+    response = make_response(data)
+    response.headers['Content-Type'] = 'application/atom+xml'
+    return response
 
 
 @sockets.route('/chat')
