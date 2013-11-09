@@ -25,6 +25,7 @@ def json_datetime(obj):
 
 url_re = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
 
+
 class IRCLogParser(object):
     def __init__(self, chan="chat", host="localhost", port=6379, db=0):
         self.chan = chan

@@ -49,3 +49,4 @@ log/
 config*
 config
 persist/
+rethinkdb_data/
