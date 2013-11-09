@@ -50,3 +50,5 @@ config*
 config
 persist/
 rethinkdb_data/
+
+config.py
