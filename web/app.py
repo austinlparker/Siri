@@ -37,7 +37,7 @@ def before_request():
 
 
 @app.teardown_request
-def teardown_request():
+def teardown_request(exception):
     try:
         g.rdb_conn.close()
     except AttributeError:
