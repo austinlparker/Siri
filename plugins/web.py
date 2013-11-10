@@ -9,6 +9,9 @@ from util import hook
 @hook.api_key('web')
 @hook.regex('.*')
 def chat_log(match, nick=None, chan=None, bot=None, conn=None, api_key=None):
+    if chan[0] != "#":
+        return
+    
     try:
 
         r = redis.Redis(host=api_key['redis']['address'],
@@ -31,6 +34,9 @@ def chat_log(match, nick=None, chan=None, bot=None, conn=None, api_key=None):
 @hook.api_key('web')
 @hook.regex('.*')
 def update_channels(match, conn=None, api_key=None, chan=None):
+    if chan[0] != "#":
+        return
+
     try:
         r = redis.Redis(host=api_key['redis']['address'],
                         port=api_key['redis']['port'],
