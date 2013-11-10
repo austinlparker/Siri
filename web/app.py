@@ -21,7 +21,7 @@ log_db = rethinkdb.db('siri').table('logs')
 url_db = rethinkdb.db('siri').table('urls')
 red = redis.Redis()
 
-chatsocket = WebsocketBackend('irc_chat')
+chatsocket = WebsocketBackend('chat')
 chatsocket.start()
 
 urlsocket = WebsocketBackend('irc_urls')
