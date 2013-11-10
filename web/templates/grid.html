@@ -84,11 +84,13 @@
      if (message.type === "message") {
        var data = $.parseJSON(message.data);
        if (data.type == "image") {
-	 var tmplsrc = $("#entry-tmpl").html();
-	 var tmpl = Handlebars.compile(tmplsrc);
-	 var entry = tmpl(data);
-	 $(entry).hide().prependTo("#tiles").fadeIn();
-	 applyLayout();
+	 if (data.channel == "{{ channel }}") {
+	    var tmplsrc = $("#entry-tmpl").html();
+	    var tmpl = Handlebars.compile(tmplsrc);
+	    var entry = tmpl(data);
+	    $(entry).hide().prependTo("#tiles").fadeIn();
+	    applyLayout();
+	 };
        };
      };
    };
