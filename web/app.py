@@ -53,7 +53,7 @@ def index():
 
 @app.route('/grid/<channel>')
 def channel_images(channel):
-    urls = list(url_db.filter({'channel': channel}).limit(50).order_by('timestamp').run(g.rdb_conn))
+    urls = list(url_db.filter({'channel': channel}).order_by(rethinkdb.desc('timestamp')).limit(100).run(g.rdb_conn))
     return render_template("grid.html", channel=channel, urls=urls)
 
 
