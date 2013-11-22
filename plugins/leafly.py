@@ -9,8 +9,10 @@ def leafly(inp):
        full_url = leafly_url + inp_key
 
        results = http.get_json(full_url)
-       try: print results['Key'] #check if we got a json object
-       except KeyError: return inp + ' not found on Leafly.com'
+       try:
+           print results['Key'] #check if we got a json object
+       except KeyError:
+           return inp + ' not found on Leafly.com'
 
        #formatting the output
        fulloutput = 'Strain: ' + results['Name']
