@@ -46,24 +46,17 @@ def search_tracks(query,api_key=None):
 
     output = result['title'] + ', uploaded by ' + result['user']['username'] + ' | Duration: '
     track_length = result['duration'] / 1000
-    if track_length < 60:
-        output += str(track_length) + 's'
-    elif track_length < 3600:
-        track_length_s = track_length % 60
-        track_length -= track_length_s
-        track_length_m = track_length / 60
-        output += str(track_length_m) + 'm ' + str(track_length_s) + 's'
-    else:
-        track_length_s = track_length % 60
-        track_length -= track_length_s
-        track_length /= 60
-        track_length_m = track_length % 60
-        track_length -= track_length_m
-        track_length_h = track_length / 60
-        output += str(track_length_h) + 'h ' + str(track_length_m) + 'm ' + str(track_length_s) + 's'
+    if track_length / 3600:
+        output += str(track_length / 3600) + 'h '
+    if track_length / 60:
+        output += str(track_length / 60) + 'm '
+    output += str(track_length % 60) + 's'
 
-    plays = "{:,}".format(result['playback_count'])
-    output += ' | ' + plays + ' plays | ' + result['permalink_url'] 
+    try: #if playcount is hidden
+        plays = "{:,}".format(result['playback_count'])
+        output += ' | ' + plays + ' plays | ' + result['permalink_url']
+    except KeyError:
+        pass
     if result['downloadable']:
         output += ' | Downloadable' 
     if result['purchase_url']:

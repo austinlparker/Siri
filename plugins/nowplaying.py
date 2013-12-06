@@ -53,21 +53,12 @@ def nowplaying(inp,nick='',server='',reply=None,db=None,api_key=None):
 
     track_info = http.get_json(api_url, method='track.getinfo', track=track_name, artist=artist, username=user, api_key=api_key)
     track_length = int(track_info['track']['duration']) / 1000
-    if track_length < 60:
-        output += '(' + str(track_length) + 's)'
-    elif track_length < 3600:
-        track_length_s = track_length % 60
-        track_length -= track_length_s
-        track_length_m = track_length / 60
-        output += '(' + str(track_length_m) + 'm ' + str(track_length_s) + 's)'
-    else:
-        track_length_s = track_length % 60
-        track_length -= track_length_s
-        track_length /= 60
-        track_length_m = track_length % 60
-        track_length -= track_length_m
-        track_length_h = track_length / 60
-        output += '(' + str(track_length_h) + 'h ' + str(track_length_m) + 'm ' + str(track_length_s) + 's)'
+    output += '('
+    if track_length / 3600:
+        output += str(track_length / 3600) + 'h '
+    if track_length / 60:
+        output += str(track_length / 60) + 'm '
+    output += str(track_length % 60) + 's)'
     
     loved = 0
     try:
