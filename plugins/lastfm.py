@@ -1,55 +1,95 @@
-'''
-The Last.fm API key is retrieved from the bot config file.
-'''
-
 from util import hook, http
-
+import random
 
 api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
 @hook.api_key('lastfm')
 @hook.command(autohelp=False)
-def lastfm(inp, nick='', say=None, api_key=None):
-    if inp:
+def lastfm(inp,nick=None,api_key=None):
+    ".lastfm [user1] [user2] -- gets Last.fm information about a single user or compares two users. "\
+    "If user1 is blank then the user matching the current nickname will be returned."
+
+    try:
+        user1, user2 = inp.split(' ')
+        return compare(user1,user2,api_key)
+    except ValueError:
         user = inp
-    else:
+    if not inp:
         user = nick
 
-    response = http.get_json(api_url, method="user.getrecenttracks",
-                             api_key=api_key, user=user, limit=1)
+    user_json = http.get_json(api_url, method='user.getinfo', user=user, api_key=api_key)
+    try: #check if user exists
+        return user_json['message'].replace('that name','the name ' + user)
+    except:
+        pass
 
-    if 'error' in response:
-        if inp:  # specified a user name
-            return "error: %s" % response["message"]
-        else:
-            return "your nick is not a Last.fm account. try '.lastfm username'."
+    user_info = user_json['user']
+    output = user_info['url'] + ' | ' + user_info['playcount'] + ' plays'
+    if user_info['playcount'] != '0': #keyerror with zero plays
+        output += ' | Top artists: '
+        top_artists = http.get_json(api_url, method='user.gettopartists', user=user, api_key=api_key)['topartists']
+        count = int(top_artists['@attr']['total'])
+        top_artists = top_artists['artist']
+        if count == 0: #arnie is a dick and had only two artists and tracks
+            output += 'none'
+        elif count > 4:
+            count = 3
+        print count
+        for i in range(0,count):
+            output += top_artists[i]['name'] + ' (' + top_artists[i]['playcount'] + ')'
+            if i < (count-1):
+                output += ', '
 
-    if not "track" in response["recenttracks"] or len(response["recenttracks"]["track"]) == 0:
-        return "no recent tracks for user \x02%s\x0F found" % user
+        output += ' | Top tracks: '
+        top_tracks = http.get_json(api_url, method='user.gettoptracks', user=user, api_key=api_key)['toptracks']
+        count = int(top_tracks['@attr']['total'])
+        top_tracks = top_tracks['track']
+        if count == 0:
+            output += 'none'
+        elif count > 4:
+            count = 3
+        print count
+        for i in range(0,count):
+            output += top_tracks[i]['artist']['name'] + ' - ' + top_tracks[i]['name'] + ' (' + top_tracks[i]['playcount'] + ')'
+            if i < (count-1):
+                output += ', '
 
-    tracks = response["recenttracks"]["track"]
+    return output
 
-    if type(tracks) == list:
-        # if the user is listening to something, the tracks entry is a list
-        # the first item is the current track
-        track = tracks[0]
-        status = 'current track'
-    elif type(tracks) == dict:
-        # otherwise, they aren't listening to anything right now, and
-        # the tracks entry is a dict representing the most recent track
-        track = tracks
-        status = 'last track'
+def compare(user1,user2,api_key,bound=None):
+    comparison = http.get_json(api_url, method='tasteometer.compare', type1='user', type2='user', value1=user1, value2=user2, limit='100', api_key=api_key)
+    try: #check if user exists
+        return comparison['message']
+    except: #will throw keyerror if user exists
+        pass
+    
+    comparison = comparison['comparison']['result']
+    score = float(comparison['score']) * 100
+    score = str(score)
+    score = score[:5] # get first four digits
+    output = user1 + ' and ' + user2 + ' are ' + score + '%' + ' compatible. | Mutual artists: '
+
+    try:
+        if comparison['artists']['@attr']:
+            matches = int(comparison['artists']['@attr']['matches'])
+            if matches < 5: #get up to five mutual artists
+                bound = matches
+            else:
+                bound = 5
+    except: #if no mutual artists then matches attr doesn't exist
+       pass
+
+    if not bound:
+        output += 'none'
     else:
-        return "error parsing track listing"
+        intlist = ''
+        for i in range(0,bound): 
+            randartist = random.randint(0,(matches-1))
+            while str(randartist) in intlist: #keep getting artists until
+                randartist = random.randint(0,(matches-1))
+            output += comparison['artists']['artist'][randartist]['name']
+            intlist += str(randartist)
+            if i < (bound - 1):
+                output += ', '
 
-    title = track["name"]
-    album = track["album"]["#text"]
-    artist = track["artist"]["#text"]
-
-    ret = "\x02%s\x0F's %s - \x02%s\x0f" % (user, status, title)
-    if artist:
-        ret += " by \x02%s\x0f" % artist
-    if album:
-        ret += " on \x02%s\x0f" % album
-
-    say(ret)
+    return output
