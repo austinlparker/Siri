@@ -2,8 +2,9 @@ from util import hook, http
 goatkcd_url = 'http://goatkcd.com/'
 
 @hook.command('xkcd')
-@hook.command
+@hook.command(autohelp=False)
 def goatkcd(inp):
+    '.goatkcd/.xkcd [#] [sfw] -- returns a goatkcd comic with specified number (if exists), random otherwise.'
     key = inp
     strips = 'strips'
     nsfw_tag = '(NSFW) '
