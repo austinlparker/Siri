@@ -14,12 +14,14 @@ def metacritic(inp):
     # if the results suck, it's metacritic's fault
 
     args = inp.strip()
-
+    
     game_platforms = ('ps4', 'xone', 'x360', 'ps3', 'pc', 'ds', 'wii', '3ds', 'gba', 'psv')
     all_platforms = game_platforms + ('all', 'movie', 'tv', 'album')
 
     try:
         plat, title = args.split(' ', 1)
+        if plat = 'xbone':
+            plat = 'xone'
         if plat not in all_platforms:
             # raise the ValueError so that the except block catches it
             # in this case, or in the case of the .split above raising the
