@@ -35,6 +35,7 @@ def giantbomb(inp,api_key=None):
        type = '&resources=' + type
 
     search_url = giantbomb_search_api + api_key + '&query=' + '\"' + query + '\"' + type
+    print search_url
     results = http.get_json(search_url)
 
     if results['number_of_total_results'] == 0:
@@ -57,16 +58,17 @@ def giantbomb(inp,api_key=None):
         elif top_result['youtube_id']: #if there is a youtube video, link that alongside the giant bomb page
             page_url += ' | http://youtube.com/watch?v=' + top_result['youtube_id']
 
-    #get page deck (brief description)
-    page_api_url = top_result['api_detail_url'] + '?format=json&api_key=' + api_key
-    result_object = http.get_json(page_api_url)['results']
     deck = ''
-    if result_object['deck']: #if the page has no deck don't display it!
-       deck = ' | ' + result_object['deck']
+    if top_result['deck']: #if the page has no deck don't display it!
+       deck = ' | ' + top_result['deck']
 
     #if result is a game then get a review if one exists
     if top_result['resource_type'] == 'game':
         try:
+            page_api_url = top_result['api_detail_url'] + '?format=json&api_key=' + api_key
+            print page_api_url
+            result_object = http.get_json(page_api_url)['results']
+
             review_api_url = result_object['reviews'][0]['api_detail_url'] + '?format=json&api_key=' + api_key
             review_object = http.get_json(review_api_url)['results']
             reviewer = review_object['reviewer']
