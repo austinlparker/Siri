@@ -1,9 +1,10 @@
 from util import hook, http
-import json, random
+import json, random, re
 
 twitch_api_url = 'https://api.twitch.tv/kraken/'
+twitch_re = (r'(?:twitch.*?(?:/))'
+             '([-_a-z0-9]+)', re.I)
 
-@hook.api_key('twitch') #twitch key is a client id you make up
 @hook.command(autohelp=False)
 def twitch(inp,top=None,api_key=None):
     '.twitch [game [rand]|user] <query> -- returns a specified channel, a random/top stream for a specified game '\
@@ -96,3 +97,9 @@ def search_general(query):
     
     output = '[LIVE] ' + result['channel']['status'] + ' | Playing: ' + result['game'] + ' | ' + str(result['viewers']) + ' viewers | ' + result['channel']['url']
     return output.replace('&#39;','\'')
+
+@hook.regex(*twitch_re)
+def twitch_url(match):
+    output = search_user(match.group(1))
+    last_pipe = output.rfind('|')
+    return output[:(last_pipe-1)]
