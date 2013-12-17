@@ -31,9 +31,9 @@ def search_users(query,api_key=None):
             output += result['city'] + ', '
         output += result['country']
     output += ' | ' + str(result['track_count']) + ' tracks, ' + str(result['followers_count']) + ' followers'
-    output += ' | ' + result['permalink_url']
     if result['website']:
         output += ' | ' + result['website']
+    output += ' | ' + result['permalink_url']
     return output
 
 def search_tracks(query,api_key=None):
@@ -54,11 +54,12 @@ def search_tracks(query,api_key=None):
 
     try: #if playcount is hidden
         plays = "{:,}".format(result['playback_count'])
-        output += ' | ' + plays + ' plays | ' + result['permalink_url']
+        output += ' | ' + plays + ' plays'
     except KeyError:
         pass
     if result['downloadable']:
         output += ' | Downloadable' 
     if result['purchase_url']:
         output += ' | Purchasable at ' + result['purchase_url']
+    output += ' | ' + result['permalink_url']
     return output
