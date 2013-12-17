@@ -5,8 +5,11 @@ api_url = "http://ws.audioscrobbler.com/2.0/?format=json"
 
 @hook.api_key('lastfm')
 @hook.command('np')
-@hook.command()
+@hook.command(autohelp=False)
 def nowplaying(inp,nick='',server='',reply=None,db=None,api_key=None):
+    """.nowplaying/.np <user> -- returns the latest played (or currently playing track) for a specified Last.fm user """\
+    """or the current nick if no parameters are passed. This nick / user combination will be saved, """\
+    """and the user will only have to type .np to return the data."""
     try:
         username, extra = inp.split(' ')
         return ".nowplaying/.np <user> -- lists the currently playing or last played for a Last.fm user"
@@ -23,8 +26,7 @@ def nowplaying(inp,nick='',server='',reply=None,db=None,api_key=None):
             newuser = 'TRUE'
         else:
             user = user[0]
-      
-    print api_url + '&method=user.getrecenttracks&user=' + user + '&api_key=' + api_key
+    
     tracks_json = http.get_json(api_url, method='user.getrecenttracks', user=user, api_key=api_key)
     try: #check if user exists
         return tracks_json['message']
