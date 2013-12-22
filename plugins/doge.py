@@ -6,7 +6,7 @@ import lxml.html
 
 @hook.command
 def doge(inp, say=None):
-    return "Ð1000.00 is currently worth ${0}.".format(get_usd())
+    return "1000 doge is currently worth ${0}.".format(get_usd())
 
 
 def get_usd():
