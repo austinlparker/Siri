@@ -6,11 +6,19 @@ import lxml.html
 
 @hook.command
 def doge(inp, say=None):
-    return "1000 doge is currently worth ${0}.".format(get_usd())
+    try:
+        amount = int(inp)
+    except:
+        amount = 1000
+        
+    return "1000 doge is currently worth ${0}.".format(get_usd(amount))
 
 
-def get_usd():
-    r = requests.get('http://dogepay.com/frame_converter.php?v=1000&from_type=DOGE&to_type=USD').text
+def get_usd(amount=1000):
+    if type(amount) != int:
+        amount = 1000
+        
+    r = requests.get('http://dogepay.com/frame_converter.php?v={0}&from_type=DOGE&to_type=USD'.format(amount)).text
     html = lxml.html.fromstring(r)
     amount = html.xpath('//font/text()')[0]
     return amount.split('= ')[1].replace('$', '')
