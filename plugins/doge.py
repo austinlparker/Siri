@@ -6,8 +6,12 @@ import lxml.html
 
 @hook.command
 def doge(inp, say=None):
-    amount = int(inp)
-    return "1000 doge is currently worth ${0}.".format(get_usd(amount))
+    try:
+        amount = int(inp)
+    except:
+        amount = 1000
+        
+    return "{1} doge is currently worth ${0}.".format(get_usd(amount), amount)
 
 
 def get_usd(amount=1000):
