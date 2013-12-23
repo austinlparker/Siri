@@ -12,18 +12,21 @@ def doge(inp, say=None):
 
 
 def get_usd(amount=1000):
-    if type(amount) != int:
+
+    try:
+        amount = int(amount)
+    except ValueError:
         amount = 1000
 
     r_btc = requests.get('http://dogepay.com/frame_converter.php?v=1&from_type=DOGE&to_type=BTC'.format(amount)).text
     r = requests.get('http://dogepay.com/frame_converter.php?v={0}&from_type=DOGE&to_type=USD'.format(amount)).text
-    
+
     html_btc = lxml.html.fromstring(r_btc)
     html = lxml.html.fromstring(r)
-    
+
     btc_exchange_raw = html_btc.xpath('//font/text()')[0]
     amount_raw = html.xpath('//font/text()')[0]
-    
+
     btc_exchange_amt = btc_exchange_raw.split('= ')[1].replace('BTC ', '')
     amount = amount_raw.split('= ')[1].replace('$', '')
     return amount, btc_exchange_amt
