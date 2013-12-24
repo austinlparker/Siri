@@ -6,7 +6,12 @@ import lxml.html
 
 @hook.command
 def doge(inp, say=None):
-    amount = inp
+
+    try:
+        amount = inp
+    except ValueError:
+        amount = 1000
+
     usd_amount,exchange_rate = get_usd(amount)
     return "{0} doge is currently worth ${1}. (1 doge = {2} BTC)".format(amount, usd_amount, exchange_rate)
 
