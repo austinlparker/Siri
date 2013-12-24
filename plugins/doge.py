@@ -6,10 +6,12 @@ import lxml.html
 
 @hook.command
 def doge(inp, say=None):
-
-    try:
-        amount = inp
-    except ValueError:
+    if inp:
+        try:
+            amount = inp
+        except ValueError:
+            amount = 1000
+    else:
         amount = 1000
 
     usd_amount,exchange_rate = get_usd(amount)
