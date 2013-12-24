@@ -8,7 +8,7 @@ import lxml.html
 def doge(inp, say=None):
     if inp:
         try:
-            amount = inp
+            amount = int(inp)
         except ValueError:
             amount = 1000
     else:
