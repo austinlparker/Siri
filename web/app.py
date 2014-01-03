@@ -67,12 +67,24 @@ def rss(channel):
     urls = list(url_db.filter({'channel': channel}).run(g.rdb_conn))[:50]
     feed = AtomFeed('Recent URLs', feed_url=request.url, url=request.url_root)
     for url in urls:
-        feed.add(url['title'], "This URL is a {0}".format(url['type']),
-                 content_type="html",
+        if url['type'].lower() == 'image':
+            c = "<img src='" + url['url'] + "'></img>"
+        else:
+            c = "This URL is a {0}".format(url['type'])
+
+        title = url.get('title', 'Missing Title')
+        if title:
+            if title == '':
+                title = 'Missing Title'
+
+        feed.add(title=title,
+                 content=c,
+                 content_type="xhtml",
                  author=url['user'],
                  url=url['url'],
                  updated=url['timestamp'],
                  published=url['timestamp'])
+
     data = feed.get_response()
     response = make_response(data)
     response.headers['Content-Type'] = 'application/atom+xml'

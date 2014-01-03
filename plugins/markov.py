@@ -6,7 +6,6 @@ import random
 @hook.command
 def markov(inp, nick='', chan='', db=None):
     ".markov <user> -- markov gen for user based on previous chat logs"
- 
     if nick == '':
         return
  
