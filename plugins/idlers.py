@@ -33,13 +33,13 @@ def names_hook(event, input=None, conn=None, chan=None, nick=None):
 def end_names_hook(event, input=None, conn=None, chan=None, nick=None):
     getting_names = False
 
-
+@hook.command('getout')
 @hook.command
 def idlecaust(inp, say=None, chan=None, nick=None, db=None, conn=None):
     global users
     admins = ['elgruntox', 'jonny290', 'sniep']
     chans = ['#yospos']
-    whitelist = ['tef', 'sl^^', 'rocketsauce']
+    whitelist = ['tef', 'sl^^', 'rocketsauce', 'serewit']
 
     kick = False
 
